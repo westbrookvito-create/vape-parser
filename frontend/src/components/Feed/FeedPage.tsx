@@ -12,8 +12,8 @@ export default function FeedPage() {
     api.get<{ posts: Post[] }>("/feed").then((r) => setPosts(r.posts));
   }, []);
 
-  async function createPost(text: string) {
-    const post = await api.post<Post>("/feed", { text });
+  async function createPost(text: string, imageUrl: string) {
+    const post = await api.post<Post>("/feed", { text, imageUrl: imageUrl || undefined });
     setPosts((prev) => [post, ...(prev ?? [])]);
   }
 

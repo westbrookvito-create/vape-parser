@@ -149,6 +149,15 @@ button {
   word-break: break-word;
 }
 
+.post-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 8px;
+  background: var(--tg-secondary-bg);
+}
+
 .post-actions {
   display: flex;
   gap: 18px;
@@ -438,6 +447,43 @@ textarea {
 
 .empty-state .emoji {
   font-size: 40px;
+}
+
+/* Captcha gate */
+.captcha-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100dvh;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 32px;
+  gap: 12px;
+  background: var(--tg-bg);
+  color: var(--tg-text);
+}
+
+.captcha-gate .emoji {
+  font-size: 48px;
+}
+
+.captcha-gate h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.captcha-gate p {
+  color: var(--tg-hint);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.captcha-gate button {
+  width: auto;
+  padding: 12px 24px;
 }
 
 /* Matches list */

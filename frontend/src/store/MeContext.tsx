@@ -5,6 +5,7 @@ import { Me } from "../types";
 interface MeContextValue {
   me: Me | null;
   loading: boolean;
+  captchaRequired: boolean;
   refetch: () => Promise<void>;
   setMe: (me: Me) => void;
 }
@@ -14,17 +15,31 @@ const MeContext = createContext<MeContextValue | null>(null);
 export function MeProvider({ children }: { children: ReactNode }) {
   const [me, setMe] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
+  const [captchaRequired, setCaptchaRequired] = useState(false);
 
   async function refetch() {
-    const data = await api.get<Me>("/users/me");
-    setMe(data);
+    try {
+      const data = await api.get<Me>("/users/me");
+      setMe(data);
+      setCaptchaRequired(false);
+    } catch (e) {
+      if (e instanceof Error && e.message === "captcha_required") {
+        setCaptchaRequired(true);
+      } else {
+        throw e;
+      }
+    }
   }
 
   useEffect(() => {
-    refetch().finally(() => setLoading(false));
+    refetch()
+      .catch((e) => console.error("Не удалось загрузить профиль:", e))
+      .finally(() => setLoading(false));
   }, []);
 
-  return <MeContext.Provider value={{ me, loading, refetch, setMe }}>{children}</MeContext.Provider>;
+  return (
+    <MeContext.Provider value={{ me, loading, captchaRequired, refetch, setMe }}>{children}</MeContext.Provider>
+  );
 }
 
 export function useMe() {

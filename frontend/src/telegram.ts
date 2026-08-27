@@ -29,13 +29,28 @@ export function haptic(style: "light" | "medium" | "heavy" = "light") {
 
 export const ADMIN_CONTACT_USERNAME = "saintsoon";
 
-/** Открывает чат с админом (@saintsoon) — внутри Telegram нативно, в браузере — новой вкладкой. */
-export function openAdminChat() {
-  const url = `https://t.me/${ADMIN_CONTACT_USERNAME}`;
+/** Открывает чат по username — внутри Telegram нативно, в браузере — новой вкладкой. */
+function openTelegramChat(username: string) {
+  const url = `https://t.me/${username}`;
   const tg = getTelegram();
   if (tg?.openTelegramLink) {
     tg.openTelegramLink(url);
   } else {
     window.open(url, "_blank");
   }
+}
+
+/** Открывает чат с админом (@saintsoon). */
+export function openAdminChat() {
+  openTelegramChat(ADMIN_CONTACT_USERNAME);
+}
+
+/** Открывает чат с самим ботом HstlGram — там проходит антибот-капча (/start). */
+export function openBotChat() {
+  const username = import.meta.env.VITE_BOT_USERNAME;
+  if (!username) {
+    console.warn("VITE_BOT_USERNAME не задан — не могу открыть чат с ботом");
+    return;
+  }
+  openTelegramChat(username);
 }

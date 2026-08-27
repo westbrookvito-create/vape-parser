@@ -56,6 +56,16 @@ export default function PostCard({ post }: { post: Post }) {
           <span className="post-time">{timeAgo(post.createdAt)}</span>
         </div>
         <p className="post-text">{post.text}</p>
+        {post.imageUrl && (
+          <img
+            className="post-image"
+            src={post.imageUrl}
+            alt=""
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+          />
+        )}
         <div className="post-actions">
           <button className={`post-action-btn ${liked ? "liked" : ""}`} onClick={toggleLike}>
             <HeartIcon filled={liked} />

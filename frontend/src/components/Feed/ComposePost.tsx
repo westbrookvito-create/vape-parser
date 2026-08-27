@@ -5,16 +5,17 @@ export default function ComposePost({
   onSubmit,
 }: {
   onClose: () => void;
-  onSubmit: (text: string) => Promise<void>;
+  onSubmit: (text: string, imageUrl: string) => Promise<void>;
 }) {
   const [text, setText] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function handleSubmit() {
     if (!text.trim() || busy) return;
     setBusy(true);
     try {
-      await onSubmit(text.trim());
+      await onSubmit(text.trim(), imageUrl.trim());
       onClose();
     } finally {
       setBusy(false);
@@ -31,6 +32,9 @@ export default function ComposePost({
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        <div style={{ height: 10 }} />
+        <div className="form-label">Картинка (URL, необязательно)</div>
+        <input type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://…" />
         <div style={{ height: 12 }} />
         <button className="btn-primary" disabled={!text.trim() || busy} onClick={handleSubmit}>
           {busy ? "Публикуем…" : "Опубликовать"}

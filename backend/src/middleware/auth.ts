@@ -37,10 +37,11 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     if (process.env.NODE_ENV !== "production" && req.header("x-dev-user")) {
       const devId = req.header("x-dev-user")!;
       const shouldBeAdmin = adminTelegramIds().includes(devId);
+      // Dev-обход не проходит капчу в боте — считаем его доверенным по умолчанию.
       const user = await prisma.user.upsert({
         where: { telegramId: devId },
-        update: shouldBeAdmin ? { isAdmin: true } : {},
-        create: { telegramId: devId, firstName: `Dev-${devId}`, isAdmin: shouldBeAdmin },
+        update: { captchaVerified: true, ...(shouldBeAdmin ? { isAdmin: true } : {}) },
+        create: { telegramId: devId, firstName: `Dev-${devId}`, isAdmin: shouldBeAdmin, captchaVerified: true },
       });
       req.userId = user.id;
       req.isAdmin = user.isAdmin;
@@ -69,6 +70,12 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       isAdmin: shouldBeAdmin,
     },
   });
+
+  // Капту проходят только в боте (/start) — без этого доступ к API закрыт,
+  // иначе кнопку меню бота можно было бы открыть в обход проверки.
+  if (!user.captchaVerified) {
+    return res.status(403).json({ error: "captcha_required" });
+  }
 
   req.userId = user.id;
   req.isAdmin = user.isAdmin;
