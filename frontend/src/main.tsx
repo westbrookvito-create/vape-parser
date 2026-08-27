@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./App";
 import "./styles/global.css";
+import { MeProvider } from "./store/MeContext";
 import { initTelegram } from "./telegram";
 
 initTelegram();
@@ -10,7 +11,9 @@ initTelegram();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HashRouter>
-      <App />
+      <MeProvider>
+        <App />
+      </MeProvider>
     </HashRouter>
   </React.StrictMode>
 );

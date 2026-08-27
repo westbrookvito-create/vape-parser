@@ -26,3 +26,16 @@ function applyThemeVars(theme: Record<string, string>) {
 export function haptic(style: "light" | "medium" | "heavy" = "light") {
   getTelegram()?.HapticFeedback?.impactOccurred(style);
 }
+
+export const ADMIN_CONTACT_USERNAME = "saintsoon";
+
+/** Открывает чат с админом (@saintsoon) — внутри Telegram нативно, в браузере — новой вкладкой. */
+export function openAdminChat() {
+  const url = `https://t.me/${ADMIN_CONTACT_USERNAME}`;
+  const tg = getTelegram();
+  if (tg?.openTelegramLink) {
+    tg.openTelegramLink(url);
+  } else {
+    window.open(url, "_blank");
+  }
+}

@@ -38,6 +38,18 @@ export function UserIcon({ filled }: Props) {
   );
 }
 
+export function ShieldIcon({ filled }: Props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path
+        d="M12 3.5 5 6v5.5c0 4.6 3 8.4 7 9.5 4-1.1 7-4.9 7-9.5V6l-7-2.5Z"
+        fill={filled ? "currentColor" : "none"}
+      />
+      {!filled && <path d="m9 12 2 2 4-4" />}
+    </svg>
+  );
+}
+
 export function CommentIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>

@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import AdminPage from "./components/Admin/AdminPage";
 import Layout from "./components/common/Layout";
 import ChatPage from "./components/Dating/ChatPage";
 import DatingPage from "./components/Dating/DatingPage";
@@ -39,6 +40,14 @@ export default function App() {
         element={
           <Layout title="Профиль">
             <ProfilePage />
+          </Layout>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <Layout title="Админ-панель">
+            <AdminPage />
           </Layout>
         }
       />

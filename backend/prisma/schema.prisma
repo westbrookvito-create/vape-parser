@@ -7,45 +7,86 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id             String   @id @default(cuid())
-  telegramId     String   @unique
-  username       String?
-  firstName      String
-  lastName       String?
-  photoUrl       String?
-  bio            String?
-  businessNiche  String?
-  city           String?
-  age            Int?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+enum DatingStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+}
 
-  // "Знакомства"
-  datingEnabled  Boolean  @default(false)
-  datingBio      String?
-  datingPhotoUrl String?
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String   @id @default(cuid())
+  telegramId    String   @unique
+  username      String?
+  firstName     String
+  lastName      String?
+  photoUrl      String?
+  bio           String?
+  businessNiche String?
+  city          String?
+  age           Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Роли/права, выдаются только через админ-панель (или ADMIN_TELEGRAM_IDS при старте)
+  isAdmin       Boolean @default(false)
+  canPostOffers Boolean @default(false)
+
+  // "Знакомства" — анкета публикуется в свайпе только после одобрения админом
+  datingEnabled         Boolean      @default(false)
+  datingBio             String?
+  datingPhotoUrl        String?
+  datingStatus          DatingStatus @default(NONE)
+  datingRejectionReason String?
 
   posts          Post[]
   likes          Like[]
   comments       Comment[]
-  swipesSent     Swipe[]   @relation("SwipesFrom")
-  swipesReceived Swipe[]   @relation("SwipesTo")
-  matchesA       Match[]   @relation("MatchUserA")
-  matchesB       Match[]   @relation("MatchUserB")
+  swipesSent     Swipe[]                  @relation("SwipesFrom")
+  swipesReceived Swipe[]                  @relation("SwipesTo")
+  matchesA       Match[]                  @relation("MatchUserA")
+  matchesB       Match[]                  @relation("MatchUserB")
   messages       Message[]
+  offerRequests  OfferPermissionRequest[]
+  vacancies      Vacancy[]
+}
+
+model OfferPermissionRequest {
+  id         String        @id @default(cuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message    String?
+  status     RequestStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+  reviewedAt DateTime?
+}
+
+model Vacancy {
+  id        String   @id @default(cuid())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  title     String
+  text      String
+  contact   String?
+  createdAt DateTime @default(now())
 }
 
 model Post {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
   text      String
   imageUrl  String?
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 
-  likes     Like[]
-  comments  Comment[]
+  likes    Like[]
+  comments Comment[]
 }
 
 model Like {
@@ -87,14 +128,14 @@ model Swipe {
 }
 
 model Match {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   userAId   String
-  userA     User      @relation("MatchUserA", fields: [userAId], references: [id])
+  userA     User     @relation("MatchUserA", fields: [userAId], references: [id])
   userBId   String
-  userB     User      @relation("MatchUserB", fields: [userBId], references: [id])
-  createdAt DateTime  @default(now())
+  userB     User     @relation("MatchUserB", fields: [userBId], references: [id])
+  createdAt DateTime @default(now())
 
-  messages  Message[]
+  messages Message[]
 
   @@unique([userAId, userBId])
 }

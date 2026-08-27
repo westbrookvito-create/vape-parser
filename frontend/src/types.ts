@@ -7,6 +7,9 @@ export interface PublicUser {
   businessNiche?: string | null;
 }
 
+export type DatingStatus = "NONE" | "PENDING" | "APPROVED" | "REJECTED";
+export type RequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+
 export interface Me extends PublicUser {
   bio?: string | null;
   city?: string | null;
@@ -14,6 +17,55 @@ export interface Me extends PublicUser {
   datingEnabled: boolean;
   datingBio?: string | null;
   datingPhotoUrl?: string | null;
+  datingStatus: DatingStatus;
+  datingRejectionReason?: string | null;
+  isAdmin: boolean;
+  canPostOffers: boolean;
+}
+
+export interface OfferRequest {
+  id: string;
+  userId: string;
+  message?: string | null;
+  status: RequestStatus;
+  createdAt: string;
+  reviewedAt?: string | null;
+}
+
+export interface OfferRequestWithUser extends OfferRequest {
+  user: PublicUser & { age?: number | null; city?: string | null };
+}
+
+export interface Vacancy {
+  id: string;
+  title: string;
+  text: string;
+  contact?: string | null;
+  createdAt: string;
+  author: PublicUser;
+}
+
+export interface AdminUser extends PublicUser {
+  age?: number | null;
+  city?: string | null;
+  isAdmin: boolean;
+  canPostOffers: boolean;
+  datingStatus: DatingStatus;
+  createdAt: string;
+}
+
+export interface DatingPendingProfile {
+  id: string;
+  firstName: string;
+  lastName?: string | null;
+  username?: string | null;
+  age?: number | null;
+  city?: string | null;
+  businessNiche?: string | null;
+  datingBio?: string | null;
+  datingPhotoUrl?: string | null;
+  photoUrl?: string | null;
+  updatedAt: string;
 }
 
 export interface Comment {

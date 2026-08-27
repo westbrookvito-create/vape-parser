@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
-import { BriefcaseIcon, HeartIcon, HomeIcon, UserIcon } from "./Icons";
+import { useMe } from "../../store/MeContext";
+import { BriefcaseIcon, HeartIcon, HomeIcon, ShieldIcon, UserIcon } from "./Icons";
 
-const tabs = [
+const baseTabs = [
   { to: "/", label: "Лента", Icon: HomeIcon },
   { to: "/dating", label: "Знакомства", Icon: HeartIcon },
   { to: "/vacancies", label: "Вакансии", Icon: BriefcaseIcon },
@@ -9,6 +10,9 @@ const tabs = [
 ];
 
 export default function TabBar() {
+  const { me } = useMe();
+  const tabs = me?.isAdmin ? [...baseTabs, { to: "/admin", label: "Админ", Icon: ShieldIcon }] : baseTabs;
+
   return (
     <nav className="tab-bar">
       {tabs.map(({ to, label, Icon }) => (

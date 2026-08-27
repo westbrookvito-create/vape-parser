@@ -1,7 +1,8 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
-import { requireAuth } from "./middleware/auth";
+import { requireAdmin, requireAuth } from "./middleware/auth";
+import adminRouter from "./routes/admin";
 import datingRouter from "./routes/dating";
 import feedRouter from "./routes/feed";
 import usersRouter from "./routes/users";
@@ -22,6 +23,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/feed", feedRouter);
 app.use("/api/dating", datingRouter);
 app.use("/api/vacancies", vacanciesRouter);
+app.use("/api/admin", requireAdmin, adminRouter);
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);

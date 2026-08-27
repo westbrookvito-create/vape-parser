@@ -25,7 +25,7 @@ router.get("/next", async (req, res) => {
   const excludeIds = [req.userId!, ...alreadySwiped.map((s) => s.toUserId)];
 
   const candidates = await prisma.user.findMany({
-    where: { datingEnabled: true, id: { notIn: excludeIds } },
+    where: { datingEnabled: true, datingStatus: "APPROVED", id: { notIn: excludeIds } },
     select: publicUserFields,
     take: 25,
   });
