@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
+import { getBot } from "../telegram/bot";
 
 const router = Router();
 
@@ -43,6 +44,21 @@ router.post("/dating/:userId/reject", async (req, res) => {
       datingStatus: "REJECTED",
       datingEnabled: false,
       datingRejectionReason: typeof reason === "string" && reason.trim() ? reason.trim() : "Анкета отклонена админом",
+    },
+  });
+  res.json(user);
+});
+
+// Полностью удаляет анкету знакомств (в отличие от отклонения — без причины, сразу очищает данные)
+router.delete("/dating/:userId", async (req, res) => {
+  const user = await prisma.user.update({
+    where: { id: req.params.userId },
+    data: {
+      datingEnabled: false,
+      datingBio: null,
+      datingPhotoUrl: null,
+      datingStatus: "NONE",
+      datingRejectionReason: null,
     },
   });
   res.json(user);
@@ -141,6 +157,37 @@ router.post("/users/:id/admin", async (req, res) => {
     data: { isAdmin: Boolean(isAdmin) },
   });
   res.json(user);
+});
+
+// --- Рассылка всем пользователям бота ---
+
+router.post("/broadcast", async (req, res) => {
+  const { text } = req.body ?? {};
+  if (!text || typeof text !== "string" || !text.trim()) {
+    return res.status(400).json({ error: "Текст рассылки обязателен" });
+  }
+
+  const bot = getBot();
+  if (!bot) {
+    return res.status(400).json({ error: "Telegram-бот не запущен (не задан BOT_TOKEN)" });
+  }
+
+  const users = await prisma.user.findMany({ select: { telegramId: true } });
+
+  let sent = 0;
+  let failed = 0;
+  for (const u of users) {
+    try {
+      await bot.api.sendMessage(u.telegramId, text.trim());
+      sent++;
+    } catch {
+      failed++;
+    }
+    // не более ~25 сообщений/сек, чтобы не упереться в лимиты Telegram
+    await new Promise((resolve) => setTimeout(resolve, 40));
+  }
+
+  res.json({ total: users.length, sent, failed });
 });
 
 export default router;

@@ -54,6 +54,12 @@ export interface AdminUser extends PublicUser {
   createdAt: string;
 }
 
+export interface BroadcastResult {
+  total: number;
+  sent: number;
+  failed: number;
+}
+
 export interface DatingPendingProfile {
   id: string;
   firstName: string;

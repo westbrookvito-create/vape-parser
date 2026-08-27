@@ -38,6 +38,9 @@ model User {
   isAdmin       Boolean @default(false)
   canPostOffers Boolean @default(false)
 
+  // Пройдена ли антибот-капча при /start в боте
+  captchaVerified Boolean @default(false)
+
   // "Знакомства" — анкета публикуется в свайпе только после одобрения админом
   datingEnabled         Boolean      @default(false)
   datingBio             String?

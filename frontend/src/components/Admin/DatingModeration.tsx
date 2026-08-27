@@ -29,6 +29,12 @@ export default function DatingModeration() {
     setReason("");
   }
 
+  async function remove(id: string) {
+    if (!confirm("Удалить анкету без объяснения причины пользователю?")) return;
+    await api.del(`/admin/dating/${id}`);
+    setProfiles((prev) => prev?.filter((p) => p.id !== id) ?? null);
+  }
+
   if (profiles === null) return <div className="center-loading">Загрузка анкет…</div>;
 
   if (profiles.length === 0) {
@@ -79,6 +85,9 @@ export default function DatingModeration() {
               </button>
               <button className="admin-btn reject" onClick={() => setRejectingId(p.id)}>
                 Отклонить
+              </button>
+              <button className="admin-btn" onClick={() => remove(p.id)}>
+                Удалить
               </button>
             </div>
           )}

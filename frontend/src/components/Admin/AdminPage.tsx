@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useMe } from "../../store/MeContext";
+import BroadcastAdmin from "./BroadcastAdmin";
 import DatingModeration from "./DatingModeration";
 import OfferRequests from "./OfferRequests";
 import UsersAdmin from "./UsersAdmin";
 import VacanciesAdmin from "./VacanciesAdmin";
 
-type Tab = "dating" | "offers" | "vacancies" | "users";
+type Tab = "dating" | "offers" | "vacancies" | "users" | "broadcast";
 
 export default function AdminPage() {
   const { me, loading } = useMe();
@@ -37,12 +38,16 @@ export default function AdminPage() {
         <button className={tab === "users" ? "active" : ""} onClick={() => setTab("users")}>
           Пользователи
         </button>
+        <button className={tab === "broadcast" ? "active" : ""} onClick={() => setTab("broadcast")}>
+          Рассылка
+        </button>
       </div>
 
       {tab === "dating" && <DatingModeration />}
       {tab === "offers" && <OfferRequests />}
       {tab === "vacancies" && <VacanciesAdmin />}
       {tab === "users" && <UsersAdmin />}
+      {tab === "broadcast" && <BroadcastAdmin />}
     </>
   );
 }

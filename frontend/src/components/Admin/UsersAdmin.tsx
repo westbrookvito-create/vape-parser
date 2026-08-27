@@ -35,6 +35,12 @@ export default function UsersAdmin() {
     }
   }
 
+  async function removeAnketa(u: AdminUser) {
+    if (!confirm(`Удалить анкету знакомств у ${u.firstName}?`)) return;
+    await api.del(`/admin/dating/${u.id}`);
+    setUsers((prev) => prev?.map((p) => (p.id === u.id ? { ...p, datingStatus: "NONE" } : p)) ?? null);
+  }
+
   return (
     <div className="admin-list">
       <div style={{ padding: "10px 16px 0" }}>
@@ -72,6 +78,11 @@ export default function UsersAdmin() {
               <button className="admin-btn" onClick={() => toggleAdmin(u)}>
                 {u.isAdmin ? "Забрать админку" : "Сделать админом"}
               </button>
+              {u.datingStatus !== "NONE" && (
+                <button className="admin-btn reject" onClick={() => removeAnketa(u)}>
+                  Удалить анкету
+                </button>
+              )}
             </div>
           </div>
         ))
