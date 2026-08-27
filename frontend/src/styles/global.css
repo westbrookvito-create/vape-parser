@@ -308,10 +308,17 @@ textarea {
 }
 
 .swipe-area {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   height: calc(100dvh - 220px);
-  min-height: 380px;
+  min-height: 460px;
   margin: 16px;
+}
+
+.swipe-card-stack {
+  position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 .swipe-card {
@@ -393,6 +400,7 @@ textarea {
   justify-content: center;
   gap: 24px;
   margin-top: 18px;
+  flex-shrink: 0;
 }
 
 .swipe-btn {

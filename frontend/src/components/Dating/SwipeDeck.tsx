@@ -49,31 +49,33 @@ export default function SwipeDeck({
 
   return (
     <div className="swipe-area">
-      <div
-        ref={cardRef}
-        className="swipe-card"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        style={{
-          transform: `translate(${drag.x}px, ${drag.y}px) rotate(${rotate}deg)`,
-          transition: drag.active ? "none" : "transform 0.25s ease",
-        }}
-      >
-        {photo && <img src={photo} alt="" />}
-        <span className="swipe-badge like" style={{ opacity: likeOpacity }}>
-          LIKE
-        </span>
-        <span className="swipe-badge pass" style={{ opacity: passOpacity }}>
-          PASS
-        </span>
-        <div className="swipe-card-info">
-          <h2>{displayName(candidate)}</h2>
-          {(candidate.businessNiche || candidate.city) && (
-            <div className="niche">{[candidate.businessNiche, candidate.city].filter(Boolean).join(" · ")}</div>
-          )}
-          {candidate.datingBio && <p>{candidate.datingBio}</p>}
+      <div className="swipe-card-stack">
+        <div
+          ref={cardRef}
+          className="swipe-card"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          style={{
+            transform: `translate(${drag.x}px, ${drag.y}px) rotate(${rotate}deg)`,
+            transition: drag.active ? "none" : "transform 0.25s ease",
+          }}
+        >
+          {photo && <img src={photo} alt="" />}
+          <span className="swipe-badge like" style={{ opacity: likeOpacity }}>
+            LIKE
+          </span>
+          <span className="swipe-badge pass" style={{ opacity: passOpacity }}>
+            PASS
+          </span>
+          <div className="swipe-card-info">
+            <h2>{displayName(candidate)}</h2>
+            {(candidate.businessNiche || candidate.city) && (
+              <div className="niche">{[candidate.businessNiche, candidate.city].filter(Boolean).join(" · ")}</div>
+            )}
+            {candidate.datingBio && <p>{candidate.datingBio}</p>}
+          </div>
         </div>
       </div>
 
