@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  telegramId     String   @unique
+  username       String?
+  firstName      String
+  lastName       String?
+  photoUrl       String?
+  bio            String?
+  businessNiche  String?
+  city           String?
+  age            Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // "Знакомства"
+  datingEnabled  Boolean  @default(false)
+  datingBio      String?
+  datingPhotoUrl String?
+
+  posts          Post[]
+  likes          Like[]
+  comments       Comment[]
+  swipesSent     Swipe[]   @relation("SwipesFrom")
+  swipesReceived Swipe[]   @relation("SwipesTo")
+  matchesA       Match[]   @relation("MatchUserA")
+  matchesB       Match[]   @relation("MatchUserB")
+  messages       Message[]
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  text      String
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+
+  likes     Like[]
+  comments  Comment[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}
+
+enum SwipeDirection {
+  LIKE
+  PASS
+}
+
+model Swipe {
+  id         String         @id @default(cuid())
+  fromUserId String
+  fromUser   User           @relation("SwipesFrom", fields: [fromUserId], references: [id])
+  toUserId   String
+  toUser     User           @relation("SwipesTo", fields: [toUserId], references: [id])
+  direction  SwipeDirection
+  createdAt  DateTime       @default(now())
+
+  @@unique([fromUserId, toUserId])
+}
+
+model Match {
+  id        String    @id @default(cuid())
+  userAId   String
+  userA     User      @relation("MatchUserA", fields: [userAId], references: [id])
+  userBId   String
+  userB     User      @relation("MatchUserB", fields: [userBId], references: [id])
+  createdAt DateTime  @default(now())
+
+  messages  Message[]
+
+  @@unique([userAId, userBId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}

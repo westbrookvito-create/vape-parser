@@ -1,9 +1,0 @@
-# Список каналов для парсинга.
-# По одному каналу на строку: username, @username или ссылка https://t.me/username
-# Строки, начинающиеся с #, игнорируются.
-# Приватные invite-ссылки (t.me/+xxxx, t.me/joinchat/xxxx) не поддерживаются —
-# их нельзя разрешить без предварительного вступления в чат.
-
-vapeshop_example
-@another_vape_shop
-https://t.me/third_vape_channel
